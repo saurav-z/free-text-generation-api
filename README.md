@@ -117,7 +117,14 @@ This project lets you deploy your own **free AI text generation API** using Clou
 curl -X POST https://<your-worker-name>.<your-subdomain>.workers.dev \
   -H "Authorization: Bearer your-secret-api-key" \
   -H "Content-Type: application/json" \
-  -d '{"prompt": "Write a short poem about a rainy day."}'
+  -d '{
+    "prompt": "Write a short poem about a rainy day.",
+    "systemPrompt": "You are a helpful assistant.",
+    "history": [
+      { "role": "user", "content": "Tell me something about weather." },
+      { "role": "assistant", "content": "Weather is the state of the atmosphere." }
+    ]
+  }'
 ```
 
 ### 🌐 JavaScript Example
@@ -129,11 +136,23 @@ const res = await fetch("https://<your-worker-name>.<your-subdomain>.workers.dev
     "Authorization": "Bearer your-secret-api-key",
     "Content-Type": "application/json",
   },
-  body: JSON.stringify({ prompt: "What is the capital of France?" }),
+  body: JSON.stringify({
+    prompt: "What is the capital of France?",
+    systemPrompt: "You are a knowledgeable assistant.",
+    history: [
+      { role: "user", content: "Tell me about Europe." },
+      { role: "assistant", content: "Europe is a continent with many countries." }
+    ]
+  }),
 });
 const text = await res.text();
 console.log(text);
 ```
+
+> **Note:**  
+> - `prompt` (string) is required.  
+> - `systemPrompt` (string, optional) sets the assistant's behavior.  
+> - `history` (array, optional) provides previous conversation context.
 
 ---
 

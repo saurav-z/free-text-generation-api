@@ -13,9 +13,13 @@ export default {
         if (request.method !== "POST" || url.pathname !== "/") {
             return json({ error: "Not allowed" }, 405);
         }
-
         try {
-            const { prompt } = await request.json();
+            // Parse the JSON request body.
+            // Code expect a 'prompt' and an optional 'systemPrompt' and 'history'.
+            const body = await request.json();
+            const prompt = body.prompt;
+            const systemPrompt = body.systemPrompt;
+            const history = body.history || [];
 
             if (!prompt) return json({ error: "Prompt is required" }, 400);
 
@@ -27,13 +31,21 @@ export default {
             // "@cf/qwen/qwen1.5-0.5b-chat"
             // "@cf/microsoft/phi-2"
 
-            // 🧠 Generate text from prompt
-            const { response } = await env.AI.run(
-                "@cf/meta/llama-3-8b-instruct",
-                { prompt }
-            );
+            const model = "@cf/meta/llama-3-8b-instruct";
 
-            return json({ response });
+            // Build messages array for conversation context
+            const messages = [];
+            if (systemPrompt) {
+                messages.push({ role: "system", content: systemPrompt });
+            }
+            messages.push(...history);
+            messages.push({ role: "user", content: prompt });
+
+            // 🧠 Generate text from prompt and context
+            const aiResponse = await env.AI.run(model, { messages });
+            const generatedText = aiResponse.response;
+
+            return json({ response: generatedText });
         } catch (err) {
             return json({ error: "Failed to generate text", details: err.message }, 500);
         }
