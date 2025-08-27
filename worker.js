@@ -15,8 +15,8 @@ export default {
         }
         try {
             // Parse the JSON request body.
-            // Code expect a 'prompt' and an optional 'systemPrompt' and 'history'.
             const body = await request.json();
+            // Code expect a 'prompt' and an optional 'systemPrompt' and 'history'.
             const prompt = body.prompt;
             const systemPrompt = body.systemPrompt;
             const history = body.history || [];
@@ -25,11 +25,13 @@ export default {
 
             // Choose a model from the list of free text generation models:
             // "@cf/meta/llama-3-8b-instruct"
+            // "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
             // "@cf/mistral/mistral-7b-instruct-v0.2"
             // "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b"
             // "@cf/meta/llama-2-7b-chat-fp16"
             // "@cf/qwen/qwen1.5-0.5b-chat"
             // "@cf/microsoft/phi-2"
+            // More models are available in the documentation. https://developers.cloudflare.com/workers-ai/models/
 
             const model = "@cf/meta/llama-3-8b-instruct";
 
